@@ -5,6 +5,7 @@
 #else // !_WIN32
 #include <png.h>
 #endif // _WIN32
+#include <zlib.h>
 
 inline PNGReader::PNGReader( const char* fileName , unsigned int& width , unsigned int& height , unsigned int& channels )
 {
