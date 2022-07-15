@@ -37,22 +37,28 @@ string(JOIN " " CMAKE_EXE_LINKER_FLAGS_RELEASE
     ${CMAKE_CXX_FLAGS_RELEASE}
 )
 
-file(GLOB_RECURSE SRCS_ZLIB "ZLIB/*.c")
-add_library(ZLIB STATIC ${SRCS_ZLIB})
 
-file(GLOB_RECURSE SRCS_PNG "PNG/*.c")
-add_library(PNG STATIC ${SRCS_PNG})
+find_package(PkgConfig)
 
-file(GLOB_RECURSE SRCS_JPEG "JPEG/*.cpp")
-add_library(JPEG STATIC ${SRCS_JPEG})
+#file(GLOB_RECURSE SRCS_ZLIB "ZLIB/*.c")
+#add_library(ZLIB STATIC ${SRCS_ZLIB})
+pkg_search_module(ZLIB REQUIRED zlib)
 
-include_directories(${CMAKE_CURRENT_LIST_DIR} JPEG ZLIB PNG)
+#file(GLOB_RECURSE SRCS_PNG "PNG/*.c")
+#add_library(PNG STATIC ${SRCS_PNG})
+pkg_search_module(PNG REQUIRED libpng)
+
+#file(GLOB_RECURSE SRCS_JPEG "JPEG/*.cpp")
+#add_library(JPEG STATIC ${SRCS_JPEG})
+pkg_search_module(JPEG REQUIRED libjpeg)
+
+#include_directories(${CMAKE_CURRENT_LIST_DIR} JPEG ZLIB PNG)
 
 if (BUILD_SHARED_LIB)
     message(STATUS "PoissonRecon: Building shared library")
     add_library(PoissonRecon SHARED Src/PoissonRecon.cpp)
-    target_link_libraries(PoissonRecon PRIVATE PNG ZLIB JPEG Threads::Threads)
-    target_compile_definitions(PoissonRecon PRIVATE -Dmain=PoissonRecon)
+#    target_link_libraries(PoissonRecon PRIVATE PNG ZLIB JPEG Threads::Threads)
+#    target_compile_definitions(PoissonRecon PRIVATE -Dmain=PoissonRecon)
     install(
         TARGETS PoissonRecon
         EXPORT PoissonRecon
@@ -69,6 +75,7 @@ endif()
 if (BUILD_EXECUTABLE)
     message(STATUS "PoissonRecon: Building executable")
     add_executable(PoissonReconApp Src/PoissonRecon.cpp)
-    target_link_libraries(PoissonReconApp PRIVATE PNG ZLIB JPEG Threads::Threads)
+#    target_link_libraries(PoissonReconApp PRIVATE PNG ZLIB JPEG Threads::Threads)
+    target_link_libraries(PoissonReconApp PUBLIC zlib libpng libjpeg)
     install(TARGETS PoissonReconApp)
 endif()
